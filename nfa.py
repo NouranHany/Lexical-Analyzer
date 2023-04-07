@@ -67,19 +67,20 @@ class NFA:
     def zero_or_one(self):
         self.connect_with_epsilon(self.start_state, self.end_state)
 
-    def render_graph(self, filename):
-        gra = Digraph(graph_attr={'rankdir':'LR'})
+    def render_graph(self, filename, pattern):
+        gra = Digraph(graph_attr={'rankdir':'LR', 'bgcolor':'#6169F8'})
         # Add the nodes to the graph
         for state in self.states:
             shape = "doublecircle" if state == self.end_state else "circle"
-            gra.node(state, shape=shape)
+            gra.node(state, shape=shape, style='filled', fillcolor='#89FCE2')
 
         # Add the edges to the graph
         for from_state in self.states:
             for input in self.states[from_state]:
                 for to_state in self.states[from_state][input]:
-                    gra.edge(tail_name=from_state, head_name=to_state, label=input)
+                    gra.edge(tail_name=from_state, head_name=to_state, label=input, color='yellow')
 
+        gra.attr(label="The NFA for the pattern: " + pattern, fontcolor='white', fontname='bold', fontsize='20')
         gra.render(filename, view=True)
 
 def construct_nfa(postfix_reg):

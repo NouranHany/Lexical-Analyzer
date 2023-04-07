@@ -11,4 +11,4 @@ if __name__ == "__main__":
     # Step 4: Build the NFA
     nfa = construct_nfa(postfix_pattern)
     # Step 5: Render the NFA as a graph
-    nfa.render_graph("pattern")
+    nfa.render_graph(filename="pattern", pattern=pattern)
