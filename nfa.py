@@ -12,6 +12,9 @@ def generate_state():
 
 class NFA:
     def __init__(self, start_state, end_state, state_input):
+        '''
+        A class that represents a non-deterministic finite automaton.
+        '''
         self.start_state = start_state
         self.end_state = end_state
         self.states = {
@@ -27,27 +30,37 @@ class NFA:
         else:
             self.states[from_state]["ε"] = [to_state]
 
-    def concatenate(self, NFA2):
-        self.connect_with_epsilon(self.end_state, NFA2.start_state)
-        self.states.update(NFA2.states)
-        self.end_state = NFA2.end_state
+    def concatenate(self, other_nfa):
+        '''
+        Takes another NFA and concatenates it with the current NFA.
+        '''
+        self.connect_with_epsilon(self.end_state, other_nfa.start_state)
+        self.states.update(other_nfa.states)
+        self.end_state = other_nfa.end_state
 
-    def disjunction(self, NFA2):
+    def disjunction(self, other_nfa):
+        '''
+        Takes another NFA and constructs a new NFA 
+        that represents the disjunction of the two NFAs.
+        '''
         start_state = generate_state()
         end_state = generate_state()
 
-        self.states[start_state] = {"ε": [self.start_state, NFA2.start_state]}
+        self.states[start_state] = {"ε": [self.start_state, other_nfa.start_state]}
         self.states[end_state] = {}
 
         self.connect_with_epsilon(self.end_state, end_state)
-        NFA2.connect_with_epsilon(NFA2.end_state, end_state)
+        other_nfa.connect_with_epsilon(other_nfa.end_state, end_state)
 
-        self.states.update(NFA2.states)
+        self.states.update(other_nfa.states)
 
         self.start_state = start_state
         self.end_state = end_state
 
     def loop_one_or_more(self):
+        '''
+        Constructs a new NFA that represents the one or more loop of the current NFA.
+        '''
         start_state = generate_state()
         end_state = generate_state()
 
@@ -61,26 +74,36 @@ class NFA:
         self.end_state = end_state
 
     def loop_zero_or_more(self):
+        '''
+        Constructs a new NFA that represents the zero or more loop of the current NFA.
+        '''
         self.loop_one_or_more()
         self.connect_with_epsilon(self.start_state, self.end_state)
 
     def zero_or_one(self):
+        '''
+        Constructs a new NFA that represents the zero or one loop of the current NFA.
+        '''
         self.connect_with_epsilon(self.start_state, self.end_state)
 
-    def render_graph(self, filename, pattern):
-        gra = Digraph(graph_attr={'rankdir':'LR', 'bgcolor':'#6169F8'})
+    def render_graph(self, filename, pattern, attr):
+        '''
+        Renders the NFA as a graph and saves it to a file.
+        '''
+
+        gra = Digraph(graph_attr={'rankdir':'LR', 'bgcolor': attr["bgcolor"]})
         # Add the nodes to the graph
         for state in self.states:
             shape = "doublecircle" if state == self.end_state else "circle"
-            gra.node(state, shape=shape, style='filled', fillcolor='#89FCE2')
+            gra.node(state, shape=shape, style='filled', fillcolor= attr["node_fillcolor"])
 
         # Add the edges to the graph
         for from_state in self.states:
             for input in self.states[from_state]:
                 for to_state in self.states[from_state][input]:
-                    gra.edge(tail_name=from_state, head_name=to_state, label=input, color='yellow')
+                    gra.edge(tail_name=from_state, head_name=to_state, label=input, color=attr["edge_color"])
 
-        gra.attr(label="The NFA for the pattern: " + pattern, fontcolor='white', fontname='bold', fontsize='20')
+        gra.attr(label="The NFA for the pattern: " + pattern, fontcolor=attr["label_fontcolor"], fontname='bold', fontsize=attr["label_fontsize"])
         gra.render(filename, view=True)
 
 def construct_nfa(postfix_reg):

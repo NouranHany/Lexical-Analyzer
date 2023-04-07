@@ -1,6 +1,11 @@
 import re
 
 def validate_regex(pattern):
+    '''
+    Takes a regular expression as input and checks if it's valid. 
+    If it's not valid, it raises an error. 
+    If it's valid, it returns a cleaned-up version of the input.
+    '''
     try:
         re.compile(pattern)
 
@@ -9,6 +14,11 @@ def validate_regex(pattern):
         exit()
 
 def replace_range(match_obj):
+    '''
+    Takes a regular expression as input and
+    replaces any character ranges with the expanded character set. 
+    E.g [a-c] is transformed to a | b | c
+    '''
     replaced=''
     start=None
     end=None
@@ -34,6 +44,10 @@ def replace_range(match_obj):
     return replaced
 
 def add_concat(pattern):
+    '''
+    Takes a preprocessed regular expression and 
+    inserts explicit concatenation operators.
+    '''
     literals='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     i=0
     while i != len(pattern)-1:
@@ -53,11 +67,19 @@ def add_concat(pattern):
     return pattern
 
 def fix_pattern(pattern):
+    '''
+    Combines the above functions to take an input regular expression and
+    return a cleaned-up, preprocessed version.
+    '''
     pattern =re.sub(r'\[(?:.-.)+\]', replace_range,pattern)
     pattern=add_concat(pattern)
     return pattern
 
 def infix_to_postfix(regex):
+    '''
+    Takes a preprocessed regular expression and 
+    converts it into postfix notation using the Shunting-Yard algorithm.
+    '''
     output_queue = []
     operator_stack = []
     # the precedence of the operators is defined here
