@@ -29,7 +29,7 @@ This project is a Python-based lexical analyzer, consisting of two main files: `
 - `render_graph(self, filename)`: Renders the NFA as a graph and saves it to a file.
 
 ## Usage
-Suppose we have the regular expression pattern `a(a|b)*b` 
+Suppose we have the regular expression pattern `a*(a|b)aa` 
 
 We can transform this into postfix notation using the functions in `postfix.py`, as follows:
 
@@ -42,7 +42,7 @@ We can transform this into postfix notation using the functions in `postfix.py`,
     postfix_pattern = infix_to_postfix(fixed_pattern)
     ```
 
-This results in the postfix pattern `aab|*.b.` We can then use this postfix expression to construct an NFA using the NFA class in `nfa.py`:
+This results in the postfix pattern `a*ab|.a.a.` We can then use this postfix expression to construct an NFA using the NFA class in `nfa.py`:
 
 ```python 
 # Step 4: Build the NFA
@@ -52,7 +52,7 @@ nfa.render_graph(filename="pattern")
 ```
 This will render the following NFA graph:
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/59095993/218258760-82d70b5c-56d2-4820-8644-4d5a1fb68a6b.jpg" width=400 alt="Machathon header">
+  ![image](https://user-images.githubusercontent.com/59095993/230684373-e221d9fc-9fdf-43e9-b7c6-e080f2792182.png)
 </p>
 
 ## Contributors
