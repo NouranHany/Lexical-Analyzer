@@ -2,6 +2,31 @@
 
 This project is a Python-based lexical analyzer, consisting of two main files: `postfix.py` and `nfa.py`. It contain classes and functions for validating, pre-processing, and transforming regular expressions into postfix notation, as well as for constructing non-deterministic finite automata (NFAs) from postfix expressions.
 
+## Usage
+Suppose we have the regular expression pattern `a*(a|b)aa` 
+
+We can transform this into postfix notation using the functions in `postfix.py`, as follows:
+
+```python
+# Step 1: Set the pattern
+pattern = "a*(a|b)aa"
+# Step 2: Preprocess the pattern
+fixed_pattern = fix_pattern(pattern)
+# Step 3: Convert the pattern to postfix notation
+postfix_pattern = infix_to_postfix(fixed_pattern)
+```
+
+This results in the postfix pattern `a*ab|.a.a.` We can then use this postfix expression to construct an NFA using the NFA class in `nfa.py`:
+
+```python 
+# Step 4: Build the NFA
+nfa = construct_nfa(postfix_pattern)
+# Step 5: Render the NFA as a graph
+nfa.render_graph(filename="pattern")
+```
+This will render the following NFA graph:
+![image](https://user-images.githubusercontent.com/59095993/230684642-66d26747-7c02-41bb-8275-98deb6ac0013.png)
+
 ## Transforming into Postfix
 `postfix.py` contains a set of functions that validate regular expressions, preprocess them, and transform them into postfix notation using the Shunting-Yard algorithm.
 
@@ -27,33 +52,6 @@ This project is a Python-based lexical analyzer, consisting of two main files: `
 - `loop_zero_or_more(self)`: Constructs a new NFA that represents the zero or more loop of the current NFA.
 - `zero_or_one(self)`: Constructs a new NFA that represents the zero or one loop of the current NFA.
 - `render_graph(self, filename)`: Renders the NFA as a graph and saves it to a file.
-
-## Usage
-Suppose we have the regular expression pattern `a(a|b)*b` 
-
-We can transform this into postfix notation using the functions in `postfix.py`, as follows:
-
-    ```python
-    # Step 1: Set the pattern
-    pattern = "a*(a|b)aa"
-    # Step 2: Preprocess the pattern
-    fixed_pattern = fix_pattern(pattern)
-    # Step 3: Convert the pattern to postfix notation
-    postfix_pattern = infix_to_postfix(fixed_pattern)
-    ```
-
-This results in the postfix pattern `aab|*.b.` We can then use this postfix expression to construct an NFA using the NFA class in `nfa.py`:
-
-```python 
-# Step 4: Build the NFA
-nfa = construct_nfa(postfix_pattern)
-# Step 5: Render the NFA as a graph
-nfa.render_graph(filename="pattern")
-```
-This will render the following NFA graph:
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/59095993/218258760-82d70b5c-56d2-4820-8644-4d5a1fb68a6b.jpg" width=400 alt="Machathon header">
-</p>
 
 ## Contributors
 <table align="center">
