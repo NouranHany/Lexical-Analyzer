@@ -25,7 +25,7 @@ nfa = construct_nfa(postfix_pattern)
 nfa.render_graph(filename="pattern")
 ```
 This will render the following NFA graph:
-![image](https://user-images.githubusercontent.com/59095993/230684642-66d26747-7c02-41bb-8275-98deb6ac0013.png)
+![image](https://user-images.githubusercontent.com/59095993/230686751-46d5544e-30f1-44db-98f6-a89c655bf4f8.png)
 
 ## Transforming into Postfix
 `postfix.py` contains a set of functions that validate regular expressions, preprocess them, and transform them into postfix notation using the Shunting-Yard algorithm.
