@@ -1,7 +1,3 @@
-from graphviz import Digraph
-
-import os
-os.environ["PATH"] += os.pathsep + 'C:/Program Files/Graphviz/bin/'
 
 last_state = 0
 
@@ -19,16 +15,19 @@ class NFA:
         self.end_state = end_state
         self.states = {
             self.start_state: {
-                state_input: [end_state]
+                state_input: end_state
             },
             self.end_state: {}
         }
 
     def connect_with_epsilon(self, from_state, to_state):
         if "ε" in self.states[from_state]:
-            self.states[from_state]["ε"].append(to_state)
+            if type(self.states[from_state]["ε"]) == list:
+                self.states[from_state]["ε"].append(to_state)
+            else:
+                self.states[from_state]["ε"]= [self.states[from_state]["ε"], to_state]
         else:
-            self.states[from_state]["ε"] = [to_state]
+            self.states[from_state]["ε"] = to_state
 
     def concatenate(self, other_nfa):
         '''
@@ -67,7 +66,7 @@ class NFA:
         self.connect_with_epsilon(self.end_state, self.start_state)
         self.connect_with_epsilon(self.end_state, end_state)
 
-        self.states[start_state] = {"ε": [self.start_state]}
+        self.states[start_state] = {"ε": self.start_state}
         self.states[end_state] = {}
 
         self.start_state = start_state
@@ -86,25 +85,19 @@ class NFA:
         '''
         self.connect_with_epsilon(self.start_state, self.end_state)
 
-    def render_graph(self, filename, pattern, attr):
+    def to_finite_automata_format(self):
         '''
-        Renders the NFA as a graph and saves it to a file.
+        Convert states from python dictionary to json format
         '''
-
-        gra = Digraph(graph_attr={'rankdir':'LR', 'bgcolor': attr["bgcolor"]})
-        # Add the nodes to the graph
-        for state in self.states:
-            shape = "doublecircle" if state == self.end_state else "circle"
-            gra.node(state, shape=shape, style='filled', fillcolor= attr["node_fillcolor"])
-
-        # Add the edges to the graph
-        for from_state in self.states:
-            for input in self.states[from_state]:
-                for to_state in self.states[from_state][input]:
-                    gra.edge(tail_name=from_state, head_name=to_state, label=input, color=attr["edge_color"])
-
-        gra.attr(label="The NFA for the pattern: " + pattern, fontcolor=attr["label_fontcolor"], fontname='bold', fontsize=attr["label_fontsize"])
-        gra.render(filename, view=True)
+        # Make a copy of the states dictionary
+        states = self.states
+        # Add the "is terminating state"
+        for state in states:
+            states[state]["isTerminatingState"] = state == self.end_state
+        # Add the "starting state"
+        states.update({"startingState": self.start_state})
+        # Convert to json
+        return states
 
 def construct_nfa(postfix_reg):
     stack = []
@@ -135,4 +128,5 @@ def construct_nfa(postfix_reg):
             nfa = NFA(start_state=generate_state(), end_state=generate_state(), state_input=symbol)
             stack.append(nfa)
 
-    return stack.pop()
+    final_nfa = stack.pop()
+    return final_nfa.to_finite_automata_format()
