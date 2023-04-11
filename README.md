@@ -22,7 +22,9 @@ This results in the postfix pattern `a*ab|.a.a.` We can then use this postfix ex
 # Step 4: Build the NFA
 nfa = construct_nfa(postfix_pattern)
 # Step 5: Render the NFA as a graph
-nfa.render_graph(filename="pattern")
+render_graph(nfa, filename="nfa", pattern=pattern, attr=graph_attr)
+# Step 6: Save into a Json file
+save_as_json(nfa, filename="nfa")
 ```
 This will render the following NFA graph:
 ![image](https://user-images.githubusercontent.com/59095993/230686751-46d5544e-30f1-44db-98f6-a89c655bf4f8.png)
@@ -51,7 +53,7 @@ This will render the following NFA graph:
 - `loop_one_or_more(self)`: Constructs a new NFA that represents the one or more loop of the current NFA.
 - `loop_zero_or_more(self)`: Constructs a new NFA that represents the zero or more loop of the current NFA.
 - `zero_or_one(self)`: Constructs a new NFA that represents the zero or one loop of the current NFA.
-- `render_graph(self, filename)`: Renders the NFA as a graph and saves it to a file.
+- `to_finite_automata_format(self)`: Modify the NFA states to match the standard json format of all finite automatas in this project.
 
 ## Contributors
 <table align="center">
