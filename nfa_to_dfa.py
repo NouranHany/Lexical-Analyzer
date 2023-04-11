@@ -18,10 +18,12 @@ def epsilon_enclosed(nfa,state):
     return states
 
 
-def rename(dfa):
-    '''renames the states of the dfa to be in the form of S1,S2,S3, ... instead of the tuple of the states'''
 
-    # creating  a dictionary which will be used to map from old name to new name
+
+
+def rename(dfa):
+
+    # creating  a dictionary to rename the states 
     dic={}
     index=1
     for state in dfa:
@@ -58,7 +60,7 @@ def nfa_to_dfa(nfa):
     stack=[state]
     while stack:
         poped_state=stack.pop()
-        dfa[tuple(poped_state)]={}
+        dfa[tuple(sorted(poped_state))]={}
         # loop over each small state in the poped state
         # see all the new states generated for each action and append 
         # it in the dfa with the action/ terminal that lead to it 
@@ -66,22 +68,23 @@ def nfa_to_dfa(nfa):
             # print("state =",small_state)
             for keys in nfa[small_state]:
                 if keys=="isTerminatingState":
-                    if keys in dfa[tuple(poped_state)]:
-                       dfa[tuple(poped_state)]["isTerminatingState"]=dfa[tuple(poped_state)]["isTerminatingState"]|nfa[small_state][keys]
+                    if keys in dfa[tuple(sorted(poped_state))]:
+                       dfa[tuple(sorted(poped_state))]["isTerminatingState"]=dfa[tuple(sorted(poped_state))]["isTerminatingState"]|nfa[small_state][keys]
                     else:
-                       dfa[tuple(poped_state)]["isTerminatingState"]=nfa[small_state][keys] 
+                       dfa[tuple(sorted(poped_state))]["isTerminatingState"]=nfa[small_state][keys] 
                 elif keys!='ε':
-                    next_states=epsilon_enclosed(nfa,nfa[small_state][keys])
-                    if keys in dfa[tuple(poped_state)]:
-                        dfa[tuple(poped_state)][keys].update(next_states)
+                    next_states=epsilon_enclosed(nfa,nfa[small_state][keys]) #{}
+                    if keys in dfa[tuple(sorted(poped_state))]:
+                        dfa[tuple(sorted(poped_state))][keys].update(next_states)
+                        dfa[tuple(sorted(poped_state))][keys]=set(sorted(dfa[tuple(sorted(poped_state))][keys]))
                     else:
-                        dfa[tuple(poped_state)][keys]=next_states
+                        dfa[tuple(sorted(poped_state))][keys]=set(sorted(next_states))
 
         # push new states that are not in dfa into the stack to be looped over
-        for terminal in dfa[tuple(poped_state)]:
+        for terminal in dfa[tuple(sorted(poped_state))]:
             if terminal!="isTerminatingState":
-                new_state=dfa[tuple(poped_state)][terminal]
-                if tuple(new_state) not in dfa:
+                new_state=dfa[tuple(sorted(poped_state))][terminal]
+                if tuple(sorted(new_state)) not in dfa:
                     stack.append(new_state)
 
     
