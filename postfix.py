@@ -13,35 +13,6 @@ def validate_regex(pattern):
         print("Non valid regex pattern")
         exit()
 
-def replace_range(match_obj):
-    '''
-    Takes a regular expression as input and
-    replaces any character ranges with the expanded character set. 
-    E.g [a-c] is transformed to a | b | c
-    '''
-    replaced=''
-    start=None
-    end=None
-    flag=False
-    for char in match_obj.group():
-        if char=='[':
-            replaced+='('
-        elif char==']':
-            if replaced[-1]=='|':
-                replaced=replaced[:-1]+')'
-            else: replaced+=')'
-        elif char=='-':
-            flag=True
-        else:
-            if flag:
-                end=char
-                flag=False
-                for i in range(ord(start),ord(end)+1):
-                    replaced+=chr(i)
-                    replaced+='|'               
-            else:
-                start=char
-    return replaced
 
 def add_concat(pattern):
     '''
@@ -66,14 +37,53 @@ def add_concat(pattern):
         i+=1
     return pattern
 
+
+def replace_range(match_obj):
+    '''
+    Takes a regular expression as input and
+    replaces any character ranges with the expanded character set. 
+    E.g [a-c] is transformed to a | b | c
+    '''
+    replaced=''
+    start=None
+    end=None
+    flag=False
+    index=0
+    while index< len(match_obj.group()):
+        char = match_obj.group()[index]
+        if char=='[':
+            replaced+='('
+        elif char==']':
+            if replaced[-1]=='|':
+                replaced=replaced[:-1]+')'
+            else: replaced+=')'
+        elif char=='-':
+            flag=True
+        else:
+            if flag:
+                end=char
+                flag=False
+                for i in range(ord(start)+1,ord(end)+1):
+                    replaced+=chr(i)
+                    replaced+='|'               
+            else:
+                start=char
+                replaced+=chr(ord(start))
+                replaced+='|'
+        index+=1
+    return replaced
+   
+
 def fix_pattern(pattern):
     '''
     Combines the above functions to take an input regular expression and
     return a cleaned-up, preprocessed version.
     '''
-    pattern =re.sub(r'\[(?:.-.)+\]', replace_range,pattern)
+    pattern =re.sub(r'\[(?:.)+\]', replace_range,pattern)
     pattern=add_concat(pattern)
     return pattern
+
+
 
 def infix_to_postfix(regex):
     '''
