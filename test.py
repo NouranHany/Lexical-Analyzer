@@ -15,3 +15,11 @@ if __name__ == "__main__":
         render_graph(nfa, filename="pattern", pattern=pattern, attr=graph_attr)
         # Step 6: Save into a Json file
         save_as_json(nfa, filename="nfa")
+        # Step 7: Build the DFA from NFA
+        # Step 8: Minimize the DFA
+        # Step 9: Render minimized DFA as a graph
+        # Step 10: Save minimized DFA into a Json file
+
+
+
+
